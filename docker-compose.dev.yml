@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/home/node/app
+    depends_on:
+      - db_dev
+    env_file:
+      - .env.local
+    environment:
+      - DB_HOST=db_dev
+
+  db_dev:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - ./.docker/db_data:/var/lib/postgresql/data
+    env_file:
+      - .env.local
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
