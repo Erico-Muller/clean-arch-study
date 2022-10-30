@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Cats {
-  id    String @id @default(uuid())
+  id    String @id
   name  String @db.VarChar(30)
   age   Int @db.SmallInt()
   breed String @db.VarChar(30)
