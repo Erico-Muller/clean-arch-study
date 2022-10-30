@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common'
 import helmet from 'helmet'
 import * as compression from 'compression'
 
-import { AppModule } from './shared/infra/http/app.module'
+import { AppModule } from './app.module'
 
 async function bootstrap() {
    const app = await NestFactory.create(AppModule)
