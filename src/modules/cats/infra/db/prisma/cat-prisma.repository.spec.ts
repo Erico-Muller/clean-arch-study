@@ -1,5 +1,5 @@
 import { Cat, CatProps } from '../../../domain/cat.entity'
-import { CatInMemoryRepository } from './cat-in-memory.repository'
+import { CatPrismaRepository } from './cat-prisma.repository'
 
 const defaultCatProps: CatProps = {
    name: 'Cat',
@@ -7,9 +7,14 @@ const defaultCatProps: CatProps = {
    breed: 'Siamese',
 }
 
-describe('CatInMemoryRepository Tests', () => {
+describe('CatPrismaRepository Tests', () => {
+   beforeEach(async () => {
+      const repository = new CatPrismaRepository()
+      await repository.clear()
+   })
+
    it('Should be able to return the number of registered cats', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
@@ -20,7 +25,7 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to identify if a cat is already registered', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
@@ -31,7 +36,7 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to identify if a cat is not already registered', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const catExists = await repository.exists(
          '00000000-0000-0000-0000-000000000000',
@@ -41,28 +46,31 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to insert a new cat', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
-      expect(repository.items).toHaveLength(1)
-      expect(repository.items).toStrictEqual([cat])
+      const length = await repository.length()
+      const cats = await repository.findAll()
+
+      expect(length).toBe(1)
+      expect(cats).toStrictEqual([cat])
    })
 
-   it('Should not be able to insert a new cat, throwing "this cat already exists"', async () => {
-      const repository = new CatInMemoryRepository()
+   it('Should not be able to insert a new cat, throwing "This cat already exists"', async () => {
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
       expect(repository.insert(cat)).rejects.toThrowError(
-         'this cat already exists',
+         'This cat already exists',
       )
    })
 
    it('Should able to list all the cats', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
@@ -74,18 +82,18 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to find one cat', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
-      const sut = await repository.findOne(repository.items[0].id)
+      const foundCat = await repository.findOne(cat.id)
 
-      expect(sut.name).toBe('Cat')
+      expect(foundCat.name).toBe('Cat')
    })
 
    it('Should return null trying to find one cat', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = await repository.findOne(
          '00000000-0000-0000-0000-000000000000',
@@ -95,21 +103,22 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to increment the age of a cat', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
-      expect(repository.items).toHaveLength(1)
-      expect(repository.items).toStrictEqual([cat])
+      const length = await repository.length()
+      expect(length).toBe(1)
 
       await repository.incrementAge(cat.id)
 
-      expect(repository.items[0].age).toStrictEqual(3)
+      const foundCat = await repository.findOne(cat.id)
+      expect(foundCat.age).toBe(3)
    })
 
    it('Should not be able to increment the age of a cat, throwing "Cat not found"', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       expect(() =>
          repository.incrementAge('00000000-0000-0000-0000-000000000000'),
@@ -117,22 +126,22 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to delete a cat', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
-      expect(repository.items).toHaveLength(1)
-      expect(repository.items).toStrictEqual([cat])
+      const length = await repository.length()
+      expect(length).toBe(1)
 
-      await repository.delete(repository.items[0].id)
+      await repository.delete(cat.id)
 
-      expect(repository.items).toHaveLength(0)
-      expect(repository.items).toStrictEqual([])
+      const newLength = await repository.length()
+      expect(newLength).toBe(0)
    })
 
    it('Should not be able to delete a cat, throwing "Cat not found"', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       expect(() =>
          repository.delete('00000000-0000-0000-0000-000000000000'),
@@ -140,15 +149,17 @@ describe('CatInMemoryRepository Tests', () => {
    })
 
    it('Should be able to clear all the data', async () => {
-      const repository = new CatInMemoryRepository()
+      const repository = new CatPrismaRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
-      expect(repository.items).toHaveLength(1)
+      const length = await repository.length()
+      expect(length).toBe(1)
 
       await repository.clear()
 
-      expect(repository.items).toHaveLength(0)
+      const newLength = await repository.length()
+      expect(newLength).toBe(0)
    })
 })
