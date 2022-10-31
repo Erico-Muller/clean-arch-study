@@ -12,8 +12,6 @@ export class CatPrismaRepository implements CatRepository {
       this.prisma = new PrismaClient()
    }
 
-   items: Cat[] = []
-
    async length(): Promise<number> {
       return await this.prisma.cats.count()
    }
