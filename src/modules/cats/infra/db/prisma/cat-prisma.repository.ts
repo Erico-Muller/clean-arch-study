@@ -1,5 +1,6 @@
 import { Cat } from '../../../domain/cat.entity'
 import { CatRepository } from '../../../repository/cat.repository.interface'
+import { CatMapper } from '../mapper'
 
 import { PrismaClient } from '@prisma/client'
 import type { Cats as CatPrisma } from '@prisma/client'
@@ -28,9 +29,7 @@ export class CatPrismaRepository implements CatRepository {
    async findAll(): Promise<Cat[]> {
       const cats = await this.prisma.cats.findMany()
 
-      return cats.map(cat =>
-         Cat.create({ name: cat.name, age: cat.age, breed: cat.breed }, cat.id),
-      )
+      return cats.map(cat => CatMapper.toDomain(cat))
    }
 
    async findOne(catId: string): Promise<Cat | null> {
@@ -41,10 +40,7 @@ export class CatPrismaRepository implements CatRepository {
             },
          })
 
-         const cat: Cat = Cat.create(
-            { name: foundCat.name, age: foundCat.age, breed: foundCat.breed },
-            foundCat.id,
-         )
+         const cat: Cat = CatMapper.toDomain(foundCat)
 
          return cat
       } catch {
@@ -77,10 +73,7 @@ export class CatPrismaRepository implements CatRepository {
          throw new Error('Cat not found')
       }
 
-      const cat: Cat = Cat.create(
-         { name: foundCat.name, age: foundCat.age, breed: foundCat.breed },
-         foundCat.id,
-      )
+      const cat: Cat = CatMapper.toDomain(foundCat)
 
       cat.haveABirthday()
       await this.prisma.cats.update({
