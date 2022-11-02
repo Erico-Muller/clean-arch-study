@@ -6,6 +6,9 @@ import {
    Patch,
    Param,
    Delete,
+   HttpCode,
+   HttpException,
+   HttpStatus,
 } from '@nestjs/common'
 
 import { CatService } from './cats.service'
@@ -23,26 +26,53 @@ export class CatController {
 
    @Post()
    async create(@Body() createCatDto: CreateCatDto) {
-      return this.catService.create(createCatDto)
+      return await this.catService.create(createCatDto)
    }
 
    @Get()
    async findAll() {
-      return this.catService.findAll()
+      return await this.catService.findAll()
    }
 
    @Get(':id')
    async findOne(@Param() id: FindOneCatDto) {
-      return this.catService.findOne(id)
+      const foundCat = await this.catService.findOne(id)
+
+      if (!foundCat) {
+         throw new HttpException(
+            {
+               statusCode: HttpStatus.NOT_FOUND,
+               message: ['Cat not found'],
+               error: 'Not Found',
+            },
+            HttpStatus.NOT_FOUND,
+         )
+      }
+
+      return foundCat
    }
 
    @Patch(':id')
    async haveABirthday(@Param() id: HaveABirthdayCatDto) {
-      return this.catService.haveABirthday(id)
+      return await this.catService.haveABirthday(id)
    }
 
    @Delete(':id')
+   @HttpCode(204)
    async delete(@Param() id: DeleteCatDto) {
-      return this.catService.delete(id)
+      try {
+         return await this.catService.delete(id)
+      } catch (err) {
+         const textMessage = err.message.split(':')[1].trim()
+
+         throw new HttpException(
+            {
+               statusCode: HttpStatus.NOT_FOUND,
+               message: [textMessage],
+               error: 'Not Found',
+            },
+            HttpStatus.NOT_FOUND,
+         )
+      }
    }
 }
