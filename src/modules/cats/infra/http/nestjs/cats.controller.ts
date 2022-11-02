@@ -32,17 +32,17 @@ export class CatController {
    }
 
    @Get(':id')
-   async findOne(@Param('id') id: FindOneCatDto) {
+   async findOne(@Param() id: FindOneCatDto) {
       return this.catService.findOne(id)
    }
 
    @Patch(':id')
-   async haveABirthday(@Param('id') id: HaveABirthdayCatDto) {
+   async haveABirthday(@Param() id: HaveABirthdayCatDto) {
       return this.catService.haveABirthday(id)
    }
 
    @Delete(':id')
-   async delete(@Param('id') id: DeleteCatDto) {
+   async delete(@Param() id: DeleteCatDto) {
       return this.catService.delete(id)
    }
 }
