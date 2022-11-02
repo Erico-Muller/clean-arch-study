@@ -7,7 +7,11 @@ export class DeleteCatUseCase
    constructor(private readonly catRepo: CatRepository) {}
 
    async execute(input: DeleteCatInput): Promise<void> {
-      await this.catRepo.delete(input.id)
+      try {
+         await this.catRepo.delete(input.id)
+      } catch (err) {
+         throw new Error(err)
+      }
    }
 }
 
