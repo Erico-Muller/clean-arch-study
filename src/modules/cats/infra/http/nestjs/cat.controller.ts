@@ -11,7 +11,7 @@ import {
    HttpStatus,
 } from '@nestjs/common'
 
-import { CatService } from './cats.service'
+import { CatService } from './cat.service'
 
 import {
    CreateCatDto,

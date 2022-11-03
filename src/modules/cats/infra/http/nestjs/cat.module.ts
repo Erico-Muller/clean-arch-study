@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 
-import { CatController } from './cats.controller'
-import { CatService } from './cats.service'
+import { CatController } from './cat.controller'
+import { CatService } from './cat.service'
 
 import { CatRepository } from '../../../repository/cat.repository.interface'
 import { CatPrismaRepository } from '../../db/prisma/cat-prisma.repository'

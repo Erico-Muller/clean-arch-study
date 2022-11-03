@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { CatController } from './cats.controller'
-import { CatService } from './cats.service'
+import { CatService } from './cat.service'
 
 import { CatRepository } from '../../../repository/cat.repository.interface'
 import { CatInMemoryRepository } from '../../db/in-memory/cat-in-memory.repository'
@@ -14,12 +13,11 @@ import {
    DeleteCatUseCase,
 } from '../../../use-cases'
 
-describe('CatsController', () => {
-   let controller: CatController
+describe('CatsService', () => {
+   let service: CatService
 
    beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
-         controllers: [CatController],
          providers: [
             CatService,
             {
@@ -64,10 +62,10 @@ describe('CatsController', () => {
          ],
       }).compile()
 
-      controller = module.get<CatController>(CatController)
+      service = module.get<CatService>(CatService)
    })
 
    it('should be defined', () => {
-      expect(controller).toBeDefined()
+      expect(service).toBeDefined()
    })
 })

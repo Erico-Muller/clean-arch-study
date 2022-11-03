@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { CatModule } from '../../../../modules/cats/infra/http/nestjs/cats.module'
+import { CatModule } from '../../../../modules/cats/infra/http/nestjs/cat.module'
 
 import { ConfigModule } from '@nestjs/config'
 
