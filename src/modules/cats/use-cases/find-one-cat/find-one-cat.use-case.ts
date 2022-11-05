@@ -6,10 +6,10 @@ export class FindOneCatUseCase
 {
    constructor(private readonly catRepo: CatRepository) {}
 
-   async execute(input: FindOneCatInput): Promise<FindOneCatOutput | null> {
+   async execute(input: FindOneCatInput): Promise<FindOneCatOutput> {
       const foundCat = await this.catRepo.findOne(input.id)
 
-      if (!foundCat) return null
+      if (!foundCat) throw new Error('Cat not found')
 
       return foundCat.toObject()
    }

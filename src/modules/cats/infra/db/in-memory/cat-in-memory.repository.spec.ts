@@ -50,14 +50,14 @@ describe('CatInMemoryRepository Tests', () => {
       expect(repository.items).toStrictEqual([cat])
    })
 
-   it('Should not be able to insert a new cat, throwing "this cat already exists"', async () => {
+   it('Should not be able to insert a new cat, throwing "This cat already exists"', async () => {
       const repository = new CatInMemoryRepository()
 
       const cat = Cat.create(defaultCatProps)
       await repository.insert(cat)
 
       expect(repository.insert(cat)).rejects.toThrowError(
-         'this cat already exists',
+         'This cat already exists',
       )
    })
 
@@ -84,14 +84,12 @@ describe('CatInMemoryRepository Tests', () => {
       expect(sut.name).toBe('Cat')
    })
 
-   it('Should return null trying to find one cat', async () => {
+   it('Should not be able to find one cat, throwing "Cat not found"', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = await repository.findOne(
-         '00000000-0000-0000-0000-000000000000',
-      )
-
-      expect(cat).toBeNull()
+      expect(() =>
+         repository.findOne('00000000-0000-0000-0000-000000000000'),
+      ).rejects.toThrowError('Cat not found')
    })
 
    it('Should be able to increment the age of a cat', async () => {

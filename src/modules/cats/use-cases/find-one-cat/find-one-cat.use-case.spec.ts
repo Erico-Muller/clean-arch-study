@@ -32,14 +32,12 @@ describe('FindOneCat Use Case Tests', () => {
       })
    })
 
-   it('Should return null trying to find one specific cat', async () => {
+   it('Should not be able to find one cat, throwing "Cat not found"', async () => {
       const repository = new CatInMemoryRepository()
       const findOneUseCase = new FindOneCatUseCase(repository)
 
-      const foundCat = await findOneUseCase.execute({
-         id: '00000000-0000-0000-0000-000000000000',
-      })
-
-      expect(foundCat).toBeNull()
+      expect(() =>
+         findOneUseCase.execute({ id: '00000000-0000-0000-0000-000000000000' }),
+      ).rejects.toThrowError('Cat not found')
    })
 })

@@ -18,17 +18,19 @@ export class CatInMemoryRepository implements CatRepository {
       return this.items
    }
 
-   async findOne(catId: string): Promise<Cat | null> {
-      if (!this.items.length) return null
+   async findOne(catId: string): Promise<Cat> {
+      if (!this.items.length) throw new Error('Cat not found')
 
       const cat = this.items.find(cat => cat.id === catId)
-      return cat || null
+
+      if (!cat) throw new Error('Cat not found')
+      else return cat
    }
 
    async insert(cat: Cat): Promise<void> {
       const catExists = await this.exists(cat.id)
 
-      if (catExists) throw new Error('this cat already exists')
+      if (catExists) throw new Error('This cat already exists')
 
       this.items.push(cat)
    }

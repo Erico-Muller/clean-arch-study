@@ -4,7 +4,7 @@ export interface CatRepository {
    length(): Promise<number>
    exists(catId: string): Promise<boolean>
    findAll(): Promise<Cat[]>
-   findOne(catId: string): Promise<Cat | null>
+   findOne(catId: string): Promise<Cat>
    insert(cat: Cat): Promise<void>
    incrementAge(catId: string): Promise<void>
    delete(catId: string): Promise<void>
