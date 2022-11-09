@@ -1,5 +1,5 @@
 import { Cat } from '../../../domain/cat.entity'
-import { CatRepository } from '../../../repository/cat.repository.interface'
+import type { CatRepository } from '../../../repository/cat.repository.interface'
 import { CatMapper } from '../mapper'
 
 import { PrismaClient } from '@prisma/client'
@@ -42,7 +42,7 @@ export class CatPrismaRepository implements CatRepository {
 
          return cat
       } catch {
-         return null
+         throw new Error('Cat not found')
       }
    }
 

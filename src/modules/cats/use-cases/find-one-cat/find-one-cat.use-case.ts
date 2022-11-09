@@ -1,27 +1,36 @@
-import { CatRepository } from '../../repository/cat.repository.interface'
-import { UseCase } from '../../../../shared/core/UseCase'
+import type { Cat } from '../../domain/cat.entity'
+
+import type { CatRepository } from '../../repository/cat.repository.interface'
+import type { UseCase } from '../../../../shared/core/UseCase'
+
+import { Result, left, right } from '../../../../shared/core/Result'
+import { FindOneCatErrors } from './find-one-cat.errors'
+import { AppError } from '../../../../shared/core/AppError'
+import type { CatObject } from './find-one-cat.response'
+
+import type { FindOneCatDTO } from './find-one-cat.dto'
+import type { FindOneCatResponse } from './find-one-cat.response'
 
 export class FindOneCatUseCase
-   implements UseCase<FindOneCatInput, Promise<FindOneCatOutput>>
+   implements UseCase<FindOneCatDTO, Promise<FindOneCatResponse>>
 {
    constructor(private readonly catRepo: CatRepository) {}
 
-   async execute(input: FindOneCatInput): Promise<FindOneCatOutput> {
-      const foundCat = await this.catRepo.findOne(input.id)
+   async execute(input: FindOneCatDTO): Promise<FindOneCatResponse> {
+      try {
+         let foundCat: Cat
 
-      if (!foundCat) throw new Error('Cat not found')
+         try {
+            foundCat = await this.catRepo.findOne(input.id)
+         } catch (err) {
+            return left(
+               new FindOneCatErrors.CatNotFoundError(),
+            ) as FindOneCatResponse
+         }
 
-      return foundCat.toObject()
+         return right(Result.ok<CatObject>(foundCat.toObject()))
+      } catch (err) {
+         return left(new AppError.UnexpectedError(err)) as FindOneCatResponse
+      }
    }
-}
-
-export interface FindOneCatInput {
-   id: string
-}
-
-export interface FindOneCatOutput {
-   id: string
-   name: string
-   age: number
-   breed: string
 }

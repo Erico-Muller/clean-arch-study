@@ -14,11 +14,11 @@ describe('HaveABithdayCat Use Case Tests', () => {
          breed: 'Siamese',
       })
 
-      expect(repository.items).toHaveLength(1)
+      const result = await haveABirthdayUseCase.execute({
+         id: repository.items[0].id,
+      })
 
-      await haveABirthdayUseCase.execute({ id: repository.items[0].id })
-
-      expect(repository.items[0].age).toBe(3)
+      expect(result.isRight).toBeTruthy()
    })
 
    it('Should not be able to increment the age of a specific cat, throwing "Too old cat"', async () => {
@@ -32,23 +32,21 @@ describe('HaveABithdayCat Use Case Tests', () => {
          breed: 'Siamese',
       })
 
-      expect(repository.items).toHaveLength(1)
+      const result = await haveABirthdayUseCase.execute({
+         id: repository.items[0].id,
+      })
 
-      expect(() =>
-         haveABirthdayUseCase.execute({
-            id: repository.items[0].id,
-         }),
-      ).rejects.toThrowError('Too old cat')
+      expect(result.value.getErrorValue().message).toBe('Too old cat')
    })
 
    it('Should not be able to increment the age of a specific cat, throwing "Cat not found"', async () => {
       const repository = new CatInMemoryRepository()
       const haveABirthdayUseCase = new HaveABirthdayCatUseCase(repository)
 
-      expect(() =>
-         haveABirthdayUseCase.execute({
-            id: '00000000-0000-0000-0000-000000000000',
-         }),
-      ).rejects.toThrowError('Cat not found')
+      const result = await haveABirthdayUseCase.execute({
+         id: '00000000-0000-0000-0000-000000000000',
+      })
+
+      expect(result.value.getErrorValue().message).toBe('Cat not found')
    })
 })

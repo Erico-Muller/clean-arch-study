@@ -5,18 +5,21 @@ describe('Identifier value-object', () => {
    it('Should be able to instantiate an Identifier', () => {
       const identifier = uuid()
 
-      expect(new Identifier(identifier).value).toBe(identifier)
+      const identifierOrError = Identifier.create(identifier)
+
+      expect(identifierOrError.isSuccess).toBeTruthy()
+      expect(identifierOrError.getValue().value).toBe(identifier)
    })
 
-   it('Should not be able to instantiate an Identifier, throwing "Invalid identifier"', () => {
-      expect(() => new Identifier('asdfg')).toThrowError('Invalid identifier')
+   it('Should not be able to instantiate an Identifier', () => {
+      const identifierOrError = Identifier.create('asdfg')
+
+      expect(identifierOrError.isFailure).toBeTruthy()
    })
 
-   it('Should not be able to instantiate an Identifier with an empty value, throwing "Invalid identifier"', () => {
-      expect(() => new Identifier('')).toThrowError('Invalid identifier')
-   })
+   it('Should not be able to instantiate an Identifier with an empty value', () => {
+      const identifierOrError = Identifier.create('')
 
-   it('Should not be able to instantiate an Identifier with a null value, throwing "Invalid identifier"', () => {
-      expect(() => new Identifier(null)).toThrowError('Invalid identifier')
+      expect(identifierOrError.isFailure).toBeTruthy()
    })
 })

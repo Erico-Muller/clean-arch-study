@@ -2,17 +2,17 @@ import { Breed } from './breed.value-object'
 
 describe('Breed value-object', () => {
    it('Should be able to instantiate a Breed', () => {
-      const breed = new Breed('Siamese')
+      const breedOrError = Breed.create('Siamese')
 
-      expect(breed.value).toBe('Siamese')
+      expect(breedOrError.isSuccess).toBeTruthy()
+      expect(breedOrError.getValue().value).toBe('Siamese')
    })
 
-   it('Should not be able to instantiate a Breed with a wrong length, throwing "Invalid breed"', () => {
-      expect(() => new Breed('')).toThrowError('Invalid breed')
-      expect(() => new Breed('x'.repeat(40))).toThrowError('Invalid breed')
-   })
+   it('Should not be able to instantiate a Breed with a wrong length', () => {
+      let breedOrError = Breed.create('')
+      expect(breedOrError.isFailure).toBeTruthy()
 
-   it('Should not be able to instantiate a Breed with a null value, throwing "Invalid Breed"', () => {
-      expect(() => new Breed(null)).toThrowError('Invalid breed')
+      breedOrError = Breed.create('x'.repeat(40))
+      expect(breedOrError.isFailure).toBeTruthy()
    })
 })

@@ -20,22 +20,8 @@ describe('FindAllCats Use Case Tests', () => {
          breed: 'Siamese',
       })
 
-      const allCats = await findAllUseCase.execute()
+      const result = await findAllUseCase.execute()
 
-      expect(allCats).toHaveLength(2)
-      expect(allCats).toStrictEqual([
-         {
-            id: repository.items[0].id,
-            name: 'Cat',
-            age: 2,
-            breed: 'Siamese',
-         },
-         {
-            id: repository.items[1].id,
-            name: 'Cat2',
-            age: 3,
-            breed: 'Siamese',
-         },
-      ])
+      expect(result.isRight()).toBeTruthy()
    })
 })

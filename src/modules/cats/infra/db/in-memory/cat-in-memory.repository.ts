@@ -1,5 +1,5 @@
 import { Cat } from '../../../domain/cat.entity'
-import { CatRepository } from '../../../repository/cat.repository.interface'
+import type { CatRepository } from '../../../repository/cat.repository.interface'
 
 export class CatInMemoryRepository implements CatRepository {
    items: Cat[] = []

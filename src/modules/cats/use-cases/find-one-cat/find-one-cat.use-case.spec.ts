@@ -24,20 +24,18 @@ describe('FindOneCat Use Case Tests', () => {
          id: repository.items[1].id,
       })
 
-      expect(foundCat).toStrictEqual({
-         id: repository.items[1].id,
-         name: 'Cat2',
-         age: 3,
-         breed: 'Siamese',
-      })
+      expect(foundCat.isRight).toBeTruthy()
+      expect(foundCat.value.getValue().name).toBe('Cat2')
    })
 
    it('Should not be able to find one cat, throwing "Cat not found"', async () => {
       const repository = new CatInMemoryRepository()
       const findOneUseCase = new FindOneCatUseCase(repository)
 
-      expect(() =>
-         findOneUseCase.execute({ id: '00000000-0000-0000-0000-000000000000' }),
-      ).rejects.toThrowError('Cat not found')
+      const result = await findOneUseCase.execute({
+         id: '00000000-0000-0000-0000-000000000000',
+      })
+
+      expect(result.isLeft()).toBeTruthy()
    })
 })

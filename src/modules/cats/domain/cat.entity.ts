@@ -1,8 +1,9 @@
 import { Identifier, Name, Age, Breed } from './value-objects'
+import { Result } from '../../../shared/core/Result'
 
 import { v4 as uuid } from 'uuid'
 
-const MAX_AGE = 25
+export const MAX_AGE = 25
 
 export interface CatProps {
    name: string
@@ -11,56 +12,84 @@ export interface CatProps {
 }
 
 export class Cat {
-   private readonly _id: Identifier
-   private _name: Name
-   private _age: Age
-   private _breed: Breed
+   private readonly _id: string
+   private _name: string
+   private _age: number
+   private _breed: string
 
    private constructor(props: CatProps, id?: string) {
-      this._id = id ? new Identifier(id) : new Identifier(uuid())
-      this._name = new Name(props.name)
-      this._age = new Age(props.age)
-      this._breed = new Breed(props.breed)
-
-      if (this._age.value > MAX_AGE) throw new Error('Too old cat')
-      if (this._age.value < 0) throw new Error('Invalid age')
+      this._id = id
+      this._name = props.name
+      this._age = props.age
+      this._breed = props.breed
    }
 
-   static create(props: CatProps, id?: string): Cat {
-      return new Cat(props, id)
+   static create(props: CatProps, id?: string): Result<Cat> {
+      const identifierOrError = id
+         ? Identifier.create(id)
+         : Identifier.create(uuid())
+      const nameOrError = Name.create(props.name)
+      const ageOrError = Age.create(props.age)
+      const breedOrError = Breed.create(props.breed)
+
+      const catPropsRes = Result.combine([
+         identifierOrError,
+         nameOrError,
+         ageOrError,
+         breedOrError,
+      ])
+
+      if (catPropsRes.isFailure) {
+         return Result.fail<any>(catPropsRes.getErrorValue())
+      }
+
+      const cat = new Cat(
+         {
+            name: nameOrError.getValue().value,
+            age: ageOrError.getValue().value,
+            breed: breedOrError.getValue().value,
+         },
+         identifierOrError.getValue().value,
+      )
+
+      return Result.ok<Cat>(cat)
    }
 
-   haveABirthday() {
-      if (this.age >= MAX_AGE) throw new Error('Too old cat')
+   haveABirthday(): Result<void | string> {
+      if (this.age >= MAX_AGE) return Result.fail<string>('Too old cat')
       this.age = this.age + 1
+
+      return
    }
 
    get id() {
-      return this._id.value
+      return this._id
    }
 
    get name() {
-      return this._name.value
+      return this._name
    }
 
    get age() {
-      return this._age.value
+      return this._age
    }
 
    private set age(value: number) {
-      this._age = new Age(value)
+      const ageOrError = Age.create(value)
+
+      if (ageOrError.isSuccess) this._age = ageOrError.getValue().value
    }
 
    get breed() {
-      return this._breed.value
+      return this._breed
    }
 
    toObject() {
       return {
-         id: this._id.value,
-         name: this._name.value,
-         age: this._age.value,
-         breed: this._breed.value,
+         id: this._id,
+         name: this._name,
+         age: this._age,
+         breed: this._breed,
       }
    }
 }

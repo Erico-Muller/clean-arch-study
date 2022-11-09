@@ -16,9 +16,11 @@ import {
 } from './dto'
 
 import type {
-   CreateCatOutput,
-   FindAllCatsOutput,
-   FindOneCatOutput,
+   CreateCatResponse,
+   FindAllCatsResponse,
+   FindOneCatResponse,
+   HaveABirthdayCatResponse,
+   DeleteCatResponse,
 } from '../../../use-cases'
 
 @Injectable()
@@ -31,23 +33,25 @@ export class CatService {
       private readonly deleteCat: DeleteCatUseCase,
    ) {}
 
-   async create(createCatDto: CreateCatDto): Promise<CreateCatOutput> {
+   async create(createCatDto: CreateCatDto): Promise<CreateCatResponse> {
       return await this.createCat.execute(createCatDto)
    }
 
-   async findAll(): Promise<FindAllCatsOutput> {
+   async findAll(): Promise<FindAllCatsResponse> {
       return await this.findAllCats.execute()
    }
 
-   async findOne(id: FindOneCatDto): Promise<FindOneCatOutput> {
+   async findOne(id: FindOneCatDto): Promise<FindOneCatResponse> {
       return await this.findOneCat.execute(id)
    }
 
-   async haveABirthday(id: HaveABirthdayCatDto): Promise<void> {
-      await this.haveABirthdayCat.execute(id)
+   async haveABirthday(
+      id: HaveABirthdayCatDto,
+   ): Promise<HaveABirthdayCatResponse> {
+      return await this.haveABirthdayCat.execute(id)
    }
 
-   async delete(id: DeleteCatDto): Promise<void> {
-      await this.deleteCat.execute(id)
+   async delete(id: DeleteCatDto): Promise<DeleteCatResponse> {
+      return await this.deleteCat.execute(id)
    }
 }

@@ -20,59 +20,118 @@ import {
    DeleteCatDto,
 } from './dto'
 
+import {
+   CatObject,
+   CatsObject,
+   FindOneCatErrors,
+   HaveABirthdayCatErrors,
+   DeleteCatErrors,
+} from '../../../use-cases'
+
 @Controller('cats')
 export class CatController {
    constructor(private readonly catService: CatService) {}
 
+   private throwUnexpectedError() {
+      throw new HttpException(
+         {
+            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: ['Unexpected error!'],
+            error: 'Unexpected',
+         },
+         HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+   }
+
    @Post()
-   async create(@Body() createCatDto: CreateCatDto) {
-      return await this.catService.create(createCatDto)
+   @HttpCode(201)
+   async create(@Body() createCatDto: CreateCatDto): Promise<void> {
+      const catOrError = await this.catService.create(createCatDto)
+
+      if (catOrError.isLeft()) {
+         return this.throwUnexpectedError()
+      }
    }
 
    @Get()
-   async findAll() {
-      return await this.catService.findAll()
+   async findAll(): Promise<CatsObject> {
+      const catsOrError = await this.catService.findAll()
+
+      if (catsOrError.isLeft() === true) {
+         this.throwUnexpectedError()
+      }
+
+      return catsOrError.value.getValue()
    }
 
    @Get(':id')
-   async findOne(@Param() id: FindOneCatDto) {
-      const foundCat = await this.catService.findOne(id)
+   async findOne(@Param() id: FindOneCatDto): Promise<CatObject> {
+      const foundCatOrError = await this.catService.findOne(id)
 
-      if (!foundCat) {
+      if (foundCatOrError.value instanceof FindOneCatErrors.CatNotFoundError) {
          throw new HttpException(
             {
                statusCode: HttpStatus.NOT_FOUND,
-               message: ['Cat not found'],
+               message: [foundCatOrError.value.getErrorValue().message],
                error: 'Not Found',
             },
             HttpStatus.NOT_FOUND,
          )
+      } else if (foundCatOrError.isLeft() === true) {
+         this.throwUnexpectedError()
       }
 
-      return foundCat
+      return foundCatOrError.value.getValue()
    }
 
+   // yes, this code also disgusts me.
+   // open-closed principle doesn't exist here
    @Patch(':id')
-   async haveABirthday(@Param() id: HaveABirthdayCatDto) {
-      return await this.catService.haveABirthday(id)
+   async haveABirthday(@Param() id: HaveABirthdayCatDto): Promise<void> {
+      const catOrError = await this.catService.haveABirthday(id)
+
+      if (catOrError.value instanceof HaveABirthdayCatErrors.CatNotFoundError) {
+         throw new HttpException(
+            {
+               statusCode: HttpStatus.NOT_FOUND,
+               message: [catOrError.value.getErrorValue().message],
+               error: 'Not Found',
+            },
+            HttpStatus.NOT_FOUND,
+         )
+      } else if (
+         catOrError.value instanceof HaveABirthdayCatErrors.TooOldCatError
+      ) {
+         throw new HttpException(
+            {
+               statusCode: HttpStatus.BAD_REQUEST,
+               message: [catOrError.value.getErrorValue().message],
+               error: 'Bad Request',
+            },
+            HttpStatus.BAD_REQUEST,
+         )
+      } else if (catOrError.isLeft() === true) {
+         this.throwUnexpectedError()
+      }
    }
 
    @Delete(':id')
    @HttpCode(204)
    async delete(@Param() id: DeleteCatDto) {
-      try {
-         return await this.catService.delete(id)
-      } catch (err) {
-         const textMessage = err.message.split(':')[1].trim()
+      // const textMessage = err.message.split(':')[1].trim()
+      const deletedCatOrError = await this.catService.delete(id)
 
+      if (deletedCatOrError.value instanceof DeleteCatErrors.CatNotFoundError) {
          throw new HttpException(
             {
                statusCode: HttpStatus.NOT_FOUND,
-               message: [textMessage],
+               message: [deletedCatOrError.value.getErrorValue().message],
                error: 'Not Found',
             },
             HttpStatus.NOT_FOUND,
          )
+      } else if (deletedCatOrError.isLeft() === true) {
+         this.throwUnexpectedError()
       }
    }
 }

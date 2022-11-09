@@ -6,36 +6,38 @@ describe('CreateCat Use Case Tests', () => {
       const repository = new CatInMemoryRepository()
       const createUseCase = new CreateCatUseCase(repository)
 
-      const output = await createUseCase.execute({
+      const catOrError = await createUseCase.execute({
          name: 'Cat',
          age: 2,
          breed: 'Siamese',
       })
 
-      expect(repository.items).toHaveLength(1)
-      expect(output).toStrictEqual({
-         id: repository.items[0].id,
+      expect(catOrError.isRight()).toBeTruthy()
+   })
+
+   it('Should not be able to create a new cat', async () => {
+      const repository = new CatInMemoryRepository()
+      const createUseCase = new CreateCatUseCase(repository)
+
+      const catOrError = await createUseCase.execute({
          name: 'Cat',
-         age: 2,
+         age: 26,
          breed: 'Siamese',
       })
+
+      expect(catOrError.isLeft()).toBeTruthy()
    })
 
-   it('Should not be able to create a new cat, throwing "Too old cat"', async () => {
+   it('Should not be able to create a new cat', async () => {
       const repository = new CatInMemoryRepository()
       const createUseCase = new CreateCatUseCase(repository)
 
-      expect(() =>
-         createUseCase.execute({ name: 'Cat', age: 26, breed: 'Siamese' }),
-      ).rejects.toThrowError('Too old cat')
-   })
+      const catOrError = await createUseCase.execute({
+         name: 'Cat',
+         age: -1,
+         breed: 'Siamese',
+      })
 
-   it('Should not be able to create a new cat, throwing "Invalid age"', async () => {
-      const repository = new CatInMemoryRepository()
-      const createUseCase = new CreateCatUseCase(repository)
-
-      expect(() =>
-         createUseCase.execute({ name: 'Cat', age: -1, breed: 'Siamese' }),
-      ).rejects.toThrowError('Invalid age')
+      expect(catOrError.isLeft()).toBeTruthy()
    })
 })

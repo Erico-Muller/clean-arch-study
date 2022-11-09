@@ -3,9 +3,15 @@ import type { Cats } from '@prisma/client'
 
 export class CatMapper {
    public static toDomain(cat: Cats): Cat {
-      return Cat.create(
+      const domainCatOrError = Cat.create(
          { name: cat.name, age: cat.age, breed: cat.breed },
          cat.id,
       )
+
+      domainCatOrError.isFailure
+         ? console.log(domainCatOrError.getErrorValue())
+         : ''
+
+      return domainCatOrError.isSuccess ? domainCatOrError.getValue() : null
    }
 }

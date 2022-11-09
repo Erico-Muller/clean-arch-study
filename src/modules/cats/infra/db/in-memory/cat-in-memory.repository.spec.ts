@@ -11,7 +11,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to return the number of registered cats', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       const length = await repository.length()
@@ -22,7 +22,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to identify if a cat is already registered', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       const catExists = await repository.exists(cat.id)
@@ -43,7 +43,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to insert a new cat', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       expect(repository.items).toHaveLength(1)
@@ -53,7 +53,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should not be able to insert a new cat, throwing "This cat already exists"', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       expect(repository.insert(cat)).rejects.toThrowError(
@@ -64,7 +64,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should able to list all the cats', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       const cats = await repository.findAll()
@@ -76,7 +76,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to find one cat', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       const sut = await repository.findOne(repository.items[0].id)
@@ -95,7 +95,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to increment the age of a cat', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       expect(repository.items).toHaveLength(1)
@@ -117,7 +117,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to delete a cat', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       expect(repository.items).toHaveLength(1)
@@ -140,7 +140,7 @@ describe('CatInMemoryRepository Tests', () => {
    it('Should be able to clear all the data', async () => {
       const repository = new CatInMemoryRepository()
 
-      const cat = Cat.create(defaultCatProps)
+      const cat = Cat.create(defaultCatProps).getValue()
       await repository.insert(cat)
 
       expect(repository.items).toHaveLength(1)

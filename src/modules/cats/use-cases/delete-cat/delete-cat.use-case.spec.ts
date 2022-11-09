@@ -20,28 +20,19 @@ describe('DeleteCat Use Case Tests', () => {
          breed: 'Siamese',
       })
 
-      expect(repository.items).toHaveLength(2)
+      const result = await deleteUseCase.execute({ id: repository.items[0].id })
 
-      await deleteUseCase.execute({ id: repository.items[0].id })
-
-      const items = repository.items.map(item => item.toObject())
-      expect(items).toHaveLength(1)
-      expect(items).toStrictEqual([
-         {
-            id: repository.items[0].id,
-            name: 'Cat2',
-            age: 3,
-            breed: 'Siamese',
-         },
-      ])
+      expect(result.isRight()).toBeTruthy()
    })
 
    it('Should not be able to delete one specific cat, throwing "Cat not found"', async () => {
       const repository = new CatInMemoryRepository()
       const deleteUseCase = new DeleteCatUseCase(repository)
 
-      expect(() =>
-         deleteUseCase.execute({ id: '00000000-0000-0000-0000-000000000000' }),
-      ).rejects.toThrowError('Cat not found')
+      const result = await deleteUseCase.execute({
+         id: '00000000-0000-0000-0000-000000000000',
+      })
+
+      expect(result.isLeft()).toBeTruthy()
    })
 })
