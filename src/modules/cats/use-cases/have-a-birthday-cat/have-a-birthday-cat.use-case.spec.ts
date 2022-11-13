@@ -2,7 +2,7 @@ import { HaveABirthdayCatUseCase } from './have-a-birthday-cat.use-case'
 import { CreateCatUseCase } from '../create-cat/create-cat.use-case'
 import { CatInMemoryRepository } from '../../infra/db/in-memory/cat-in-memory.repository'
 
-describe('HaveABithdayCat Use Case Tests', () => {
+describe('HaveABirthdayCat Use Case Tests', () => {
    it('Should be able to increment the age of a specific cat', async () => {
       const repository = new CatInMemoryRepository()
       const haveABirthdayUseCase = new HaveABirthdayCatUseCase(repository)

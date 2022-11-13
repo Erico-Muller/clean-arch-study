@@ -7,19 +7,18 @@ describe('Identifier value-object', () => {
 
       const identifierOrError = Identifier.create(identifier)
 
-      expect(identifierOrError.isSuccess).toBeTruthy()
-      expect(identifierOrError.getValue().value).toBe(identifier)
+      expect(identifierOrError.isRight()).toBeTruthy()
    })
 
    it('Should not be able to instantiate an Identifier', () => {
       const identifierOrError = Identifier.create('asdfg')
 
-      expect(identifierOrError.isFailure).toBeTruthy()
+      expect(identifierOrError.isLeft()).toBeTruthy()
    })
 
    it('Should not be able to instantiate an Identifier with an empty value', () => {
       const identifierOrError = Identifier.create('')
 
-      expect(identifierOrError.isFailure).toBeTruthy()
+      expect(identifierOrError.isLeft()).toBeTruthy()
    })
 })

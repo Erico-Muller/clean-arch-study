@@ -1,7 +1,7 @@
 import { Result } from '../../../../shared/core/Result'
 import { UseCaseError } from '../../../../shared/core/UseCaseError'
 
-export namespace DeleteCatErrors {
+export namespace DeleteCatError {
    export class CatNotFoundError extends Result<UseCaseError> {
       constructor() {
          super(false, {

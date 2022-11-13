@@ -4,7 +4,7 @@ import type { CatRepository } from '../../repository/cat.repository.interface'
 import type { UseCase } from '../../../../shared/core/UseCase'
 
 import { Result, left, right } from '../../../../shared/core/Result'
-import { FindOneCatErrors } from './find-one-cat.errors'
+import { FindOneCatError } from './find-one-cat.error'
 import { AppError } from '../../../../shared/core/AppError'
 import type { CatObject } from './find-one-cat.response'
 
@@ -24,7 +24,7 @@ export class FindOneCatUseCase
             foundCat = await this.catRepo.findOne(input.id)
          } catch (err) {
             return left(
-               new FindOneCatErrors.CatNotFoundError(),
+               new FindOneCatError.CatNotFoundError(),
             ) as FindOneCatResponse
          }
 

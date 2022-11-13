@@ -1,6 +1,6 @@
 import type { Either, Result } from '../../../../shared/core/Result'
 import type { AppError } from '../../../../shared/core/AppError'
-import type { FindOneCatErrors } from './find-one-cat.errors'
+import type { FindOneCatError } from './find-one-cat.error'
 
 export type CatObject = {
    id: string
@@ -10,6 +10,6 @@ export type CatObject = {
 }
 
 export type FindOneCatResponse = Either<
-   AppError.UnexpectedError | FindOneCatErrors.CatNotFoundError | Result<any>,
+   AppError.UnexpectedError | FindOneCatError.CatNotFoundError | Result<any>,
    Result<CatObject>
 >

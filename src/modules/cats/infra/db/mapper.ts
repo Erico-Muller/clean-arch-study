@@ -8,10 +8,12 @@ export class CatMapper {
          cat.id,
       )
 
-      domainCatOrError.isFailure
-         ? console.log(domainCatOrError.getErrorValue())
+      domainCatOrError.value.isFailure
+         ? console.log(domainCatOrError.value.getErrorValue())
          : ''
 
-      return domainCatOrError.isSuccess ? domainCatOrError.getValue() : null
+      return domainCatOrError.value.isSuccess
+         ? domainCatOrError.value.getValue()
+         : null
    }
 }

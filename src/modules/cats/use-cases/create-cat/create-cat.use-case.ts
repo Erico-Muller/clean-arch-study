@@ -17,13 +17,11 @@ export class CreateCatUseCase
       try {
          const catOrError = Cat.create(input)
 
-         if (catOrError.isFailure) {
-            return left(
-               Result.fail<Cat>(catOrError.getErrorValue().toString()),
-            ) as CreateCatResponse
+         if (!catOrError.isRight()) {
+            return left(catOrError.value) as CreateCatResponse
          }
 
-         this.catRepo.insert(catOrError.getValue())
+         this.catRepo.insert(catOrError.value.getValue())
          return right(Result.ok<void>())
       } catch (err) {
          return left(new AppError.UnexpectedError(err)) as CreateCatResponse

@@ -1,8 +1,8 @@
 import type { Either, Result } from '../../../../shared/core/Result'
-import type { DeleteCatErrors } from './delete-cat.errors'
+import type { DeleteCatError } from './delete-cat.error'
 import type { AppError } from '../../../../shared/core/AppError'
 
 export type DeleteCatResponse = Either<
-   AppError.UnexpectedError | DeleteCatErrors.CatNotFoundError | Result<any>,
+   AppError.UnexpectedError | DeleteCatError.CatNotFoundError | Result<any>,
    Result<void>
 >

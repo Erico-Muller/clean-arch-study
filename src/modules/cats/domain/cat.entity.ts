@@ -1,5 +1,7 @@
 import { Identifier, Name, Age, Breed } from './value-objects'
-import { Result } from '../../../shared/core/Result'
+
+import { Result, left, right } from '../../../shared/core/Result'
+import { CatResponse } from './cat.response'
 
 import { v4 as uuid } from 'uuid'
 
@@ -24,7 +26,7 @@ export class Cat {
       this._breed = props.breed
    }
 
-   static create(props: CatProps, id?: string): Result<Cat> {
+   static create(props: CatProps, id?: string): CatResponse {
       const identifierOrError = id
          ? Identifier.create(id)
          : Identifier.create(uuid())
@@ -33,26 +35,26 @@ export class Cat {
       const breedOrError = Breed.create(props.breed)
 
       const catPropsRes = Result.combine([
-         identifierOrError,
-         nameOrError,
-         ageOrError,
-         breedOrError,
+         identifierOrError.value,
+         nameOrError.value,
+         ageOrError.value,
+         breedOrError.value,
       ])
 
       if (catPropsRes.isFailure) {
-         return Result.fail<any>(catPropsRes.getErrorValue())
+         return left(catPropsRes)
       }
 
       const cat = new Cat(
          {
-            name: nameOrError.getValue().value,
-            age: ageOrError.getValue().value,
-            breed: breedOrError.getValue().value,
+            name: nameOrError.value.getValue().value,
+            age: ageOrError.value.getValue().value,
+            breed: breedOrError.value.getValue().value,
          },
-         identifierOrError.getValue().value,
+         identifierOrError.value.getValue().value,
       )
 
-      return Result.ok<Cat>(cat)
+      return right(Result.ok<Cat>(cat))
    }
 
    haveABirthday(): Result<void | string> {
@@ -77,7 +79,7 @@ export class Cat {
    private set age(value: number) {
       const ageOrError = Age.create(value)
 
-      if (ageOrError.isSuccess) this._age = ageOrError.getValue().value
+      if (ageOrError.isRight()) this._age = ageOrError.value.getValue().value
    }
 
    get breed() {

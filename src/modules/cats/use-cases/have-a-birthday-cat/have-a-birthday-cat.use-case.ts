@@ -4,7 +4,7 @@ import type { CatRepository } from '../../repository/cat.repository.interface'
 import type { UseCase } from '../../../../shared/core/UseCase'
 
 import { Result, left, right } from '../../../../shared/core/Result'
-import { HaveABirthdayCatErrors } from './have-a-birthday-cat.errors'
+import { HaveABirthdayCatError } from './have-a-birthday-cat.error'
 import { AppError } from '../../../../shared/core/AppError'
 
 import type { HaveABirthdayCatDTO } from './have-a-birthday-cat.dto'
@@ -24,7 +24,7 @@ export class HaveABirthdayCatUseCase
             foundCat = await this.catRepo.findOne(input.id)
          } catch (err) {
             return left(
-               new HaveABirthdayCatErrors.CatNotFoundError(),
+               new HaveABirthdayCatError.CatNotFoundError(),
             ) as HaveABirthdayCatResponse
          }
 
@@ -38,10 +38,10 @@ export class HaveABirthdayCatUseCase
             catObj.id,
          )
 
-         const result = cat.getValue().haveABirthday()
+         const result = cat.value.getValue().haveABirthday()
          if (result && result.isFailure) {
             return left(
-               new HaveABirthdayCatErrors.TooOldCatError(),
+               new HaveABirthdayCatError.TooOldCatError(),
             ) as HaveABirthdayCatResponse
          }
 

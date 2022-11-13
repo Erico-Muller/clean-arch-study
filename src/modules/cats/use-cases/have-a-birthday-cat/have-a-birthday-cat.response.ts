@@ -1,11 +1,11 @@
 import type { Either, Result } from '../../../../shared/core/Result'
-import type { HaveABirthdayCatErrors } from './have-a-birthday-cat.errors'
+import type { HaveABirthdayCatError } from './have-a-birthday-cat.error'
 import type { AppError } from '../../../../shared/core/AppError'
 
 export type HaveABirthdayCatResponse = Either<
    | AppError.UnexpectedError
-   | HaveABirthdayCatErrors.CatNotFoundError
-   | HaveABirthdayCatErrors.TooOldCatError
+   | HaveABirthdayCatError.CatNotFoundError
+   | HaveABirthdayCatError.TooOldCatError
    | Result<any>,
    Result<void>
 >

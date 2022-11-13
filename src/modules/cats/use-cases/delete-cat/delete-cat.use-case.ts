@@ -2,7 +2,7 @@ import type { CatRepository } from '../../repository/cat.repository.interface'
 import type { UseCase } from '../../../../shared/core/UseCase'
 
 import { Result, left, right } from '../../../../shared/core/Result'
-import { DeleteCatErrors } from './delete-cat.errors'
+import { DeleteCatError } from './delete-cat.error'
 import { AppError } from '../../../../shared/core/AppError'
 
 import type { DeleteCatDTO } from './delete-cat.dto'
@@ -19,7 +19,7 @@ export class DeleteCatUseCase
             await this.catRepo.delete(input.id)
          } catch (err) {
             return left(
-               new DeleteCatErrors.CatNotFoundError(),
+               new DeleteCatError.CatNotFoundError(),
             ) as DeleteCatResponse
          }
 
