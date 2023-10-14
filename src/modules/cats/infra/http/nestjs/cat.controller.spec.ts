@@ -14,8 +14,15 @@ import {
    DeleteCatUseCase,
 } from '../../../use-cases'
 
+const defaultCatProps = {
+   name: 'Cat',
+   age: 2,
+   breed: 'Siamese',
+}
+
 describe('CatsController', () => {
    let controller: CatController
+   let service: CatService
 
    beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
@@ -65,9 +72,18 @@ describe('CatsController', () => {
       }).compile()
 
       controller = module.get<CatController>(CatController)
+      service = module.get<CatService>(CatService)
    })
 
-   it('should be defined', () => {
+   it('Should be defined', () => {
       expect(controller).toBeDefined()
+   })
+
+   it('Should be able create a new cat', async () => {
+      await controller.create(defaultCatProps)
+
+      const cats = await controller.findAll()
+
+      expect(cats).toHaveLength(1)
    })
 })

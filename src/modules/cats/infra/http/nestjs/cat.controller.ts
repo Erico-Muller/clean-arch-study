@@ -23,9 +23,9 @@ import {
 import {
    CatObject,
    CatsObject,
-   FindOneCatErrors,
-   HaveABirthdayCatErrors,
-   DeleteCatErrors,
+   FindOneCatError,
+   HaveABirthdayCatError,
+   DeleteCatError,
 } from '../../../use-cases'
 
 @Controller('cats')
@@ -68,7 +68,7 @@ export class CatController {
    async findOne(@Param() id: FindOneCatDto): Promise<CatObject> {
       const foundCatOrError = await this.catService.findOne(id)
 
-      if (foundCatOrError.value instanceof FindOneCatErrors.CatNotFoundError) {
+      if (foundCatOrError.value instanceof FindOneCatError.CatNotFoundError) {
          throw new HttpException(
             {
                statusCode: HttpStatus.NOT_FOUND,
@@ -86,11 +86,11 @@ export class CatController {
 
    // yes, this code also disgusts me.
    // open-closed principle doesn't exist here
-   @Patch(':id')
+   @Patch(':id/birthday')
    async haveABirthday(@Param() id: HaveABirthdayCatDto): Promise<void> {
       const catOrError = await this.catService.haveABirthday(id)
 
-      if (catOrError.value instanceof HaveABirthdayCatErrors.CatNotFoundError) {
+      if (catOrError.value instanceof HaveABirthdayCatError.CatNotFoundError) {
          throw new HttpException(
             {
                statusCode: HttpStatus.NOT_FOUND,
@@ -100,7 +100,7 @@ export class CatController {
             HttpStatus.NOT_FOUND,
          )
       } else if (
-         catOrError.value instanceof HaveABirthdayCatErrors.TooOldCatError
+         catOrError.value instanceof HaveABirthdayCatError.TooOldCatError
       ) {
          throw new HttpException(
             {
@@ -121,7 +121,7 @@ export class CatController {
       // const textMessage = err.message.split(':')[1].trim()
       const deletedCatOrError = await this.catService.delete(id)
 
-      if (deletedCatOrError.value instanceof DeleteCatErrors.CatNotFoundError) {
+      if (deletedCatOrError.value instanceof DeleteCatError.CatNotFoundError) {
          throw new HttpException(
             {
                statusCode: HttpStatus.NOT_FOUND,

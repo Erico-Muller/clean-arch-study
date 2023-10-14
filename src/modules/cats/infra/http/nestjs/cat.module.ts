@@ -14,6 +14,8 @@ import {
    DeleteCatUseCase,
 } from '../../../use-cases'
 
+const currentRepository = CatPrismaRepository
+
 @Module({
    controllers: [CatController],
    providers: [
@@ -27,35 +29,35 @@ import {
          useFactory: (catRepository: CatRepository) => {
             return new CreateCatUseCase(catRepository)
          },
-         inject: [CatPrismaRepository],
+         inject: [currentRepository],
       },
       {
          provide: FindAllCatsUseCase,
          useFactory: (catRepository: CatRepository) => {
             return new FindAllCatsUseCase(catRepository)
          },
-         inject: [CatPrismaRepository],
+         inject: [currentRepository],
       },
       {
          provide: FindOneCatUseCase,
          useFactory: (catRepository: CatRepository) => {
             return new FindOneCatUseCase(catRepository)
          },
-         inject: [CatPrismaRepository],
+         inject: [currentRepository],
       },
       {
          provide: HaveABirthdayCatUseCase,
          useFactory: (catRepository: CatRepository) => {
             return new HaveABirthdayCatUseCase(catRepository)
          },
-         inject: [CatPrismaRepository],
+         inject: [currentRepository],
       },
       {
          provide: DeleteCatUseCase,
          useFactory: (catRepository: CatRepository) => {
             return new DeleteCatUseCase(catRepository)
          },
-         inject: [CatPrismaRepository],
+         inject: [currentRepository],
       },
    ],
 })

@@ -65,7 +65,7 @@ describe('CatsService', () => {
       service = module.get<CatService>(CatService)
    })
 
-   it('should be defined', () => {
+   it('Should be defined', () => {
       expect(service).toBeDefined()
    })
 })

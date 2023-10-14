@@ -10,7 +10,7 @@ datasource db {
 model Cats {
   id    String @id
   name  String @db.VarChar(30)
-  age   Int @db.SmallInt()
+  age   Int    @db.SmallInt()
   breed String @db.VarChar(30)
 
   @@map("cats")

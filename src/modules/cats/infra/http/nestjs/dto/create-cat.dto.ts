@@ -1,4 +1,4 @@
-import { IsInt, IsString, Length } from 'class-validator'
+import { IsInt, IsPositive, IsString, Length, Max } from 'class-validator'
 
 export class CreateCatDto {
    @IsString()
@@ -6,6 +6,8 @@ export class CreateCatDto {
    name: string
 
    @IsInt()
+   @IsPositive()
+   @Max(25)
    age: number
 
    @IsString()
